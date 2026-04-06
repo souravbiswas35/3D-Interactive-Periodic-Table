@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#060e1c">
+  <title>Periodic Table — Sourav Biswas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║         HUD CORNER BRACKETS      ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║              HEADER              ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <header id="header">
+    <div class="brand">
+      <span class="brand-hex" aria-hidden="true">⬡</span>
+      <div class="brand-text">
+        <div class="brand-title">PERIODIC TABLE</div>
+        <div class="brand-sub">118 ELEMENTS · INTERACTIVE 3D</div>
+      </div>
+    </div>
+
+    <nav class="controls" aria-label="Layout controls">
+      <!-- Layout buttons -->
+      <div class="btn-group" id="layout-group" role="group" aria-label="Select layout">
+        <button class="btn active" id="btn-table"   data-layout="table"  >⊞ TABLE</button>
+        <button class="btn"        id="btn-sphere"  data-layout="sphere" >◉ SPHERE</button>
+        <button class="btn"        id="btn-helix"   data-layout="helix"  >⌀ HELIX</button>
+        <button class="btn"        id="btn-grid"    data-layout="grid"   >▦ GRID</button>
+        <button class="btn"        id="btn-wave"    data-layout="wave"   >∿ WAVE</button>
+        <button class="btn"        id="btn-pyramid" data-layout="pyramid">△ PYRAMID</button>
+        <button class="btn"        id="btn-tornado" data-layout="tornado">⟳ TORNADO</button>
+      </div>
+
+      <!-- Filter -->
+      <div class="btn-group filter-wrap">
+        <span class="filter-label">FILTER</span>
+        <select id="filter-sel" aria-label="Filter by category">
+          <option value="all">ALL</option>
+          <option value="nonmetal">NONMETAL</option>
+          <option value="noble">NOBLE GAS</option>
+          <option value="alkali">ALKALI</option>
+          <option value="alkaline">ALKALINE</option>
+          <option value="transition">TRANSITION</option>
+          <option value="post-transition">POST-TRANS</option>
+          <option value="metalloid">METALLOID</option>
+          <option value="lanthanide">LANTHANIDE</option>
+          <option value="actinide">ACTINIDE</option>
+        </select>
+      </div>
+
+      <!-- Mode + Search -->
+      <button class="btn mode-btn" id="btn-mode"   aria-label="Toggle light/dark mode">◐ MODE</button>
+      <button class="btn"          id="btn-search" aria-label="Search elements">⌕ SEARCH</button>
+      <!-- Speed control -->
+      <div class="btn-group speed-wrap" title="Animation speed">
+        <span class="filter-label">🐢</span>
+        <input type="range" id="speed-slider" min="0.3" max="3" step="0.1" value="1" aria-label="Animation speed">
+        <span class="filter-label" id="speed-label">NORMAL</span>
+        <span class="filter-label">🚀</span>
+      </div>
+    </nav>
+
+    <div class="hstats" aria-live="polite">
+      <div class="hstat">
+        <span class="hstat-val" id="stat-sel">—</span>
+        <span class="hstat-lbl">SELECTED</span>
+      </div>
+      <span class="hstat-sep">|</span>
+      <div class="hstat">
+        <span class="hstat-val" id="stat-layout">TABLE</span>
+        <span class="hstat-lbl">VIEW</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║              LEGEND              ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <div class="legend" id="legend" role="list" aria-label="Element categories">
+    <span class="leg" data-cat="alkali"          role="listitem"><i style="--c:#ffaa22"></i>Alkali</span>
+    <span class="leg" data-cat="alkaline"        role="listitem"><i style="--c:#ffdd44"></i>Alkaline</span>
+    <span class="leg" data-cat="transition"      role="listitem"><i style="--c:#44ffaa"></i>Transition</span>
+    <span class="leg" data-cat="post-transition" role="listitem"><i style="--c:#88ff66"></i>Post-Trans</span>
+    <span class="leg" data-cat="metalloid"       role="listitem"><i style="--c:#ccff44"></i>Metalloid</span>
+    <span class="leg" data-cat="nonmetal"        role="listitem"><i style="--c:#ff5577"></i>Nonmetal</span>
+    <span class="leg" data-cat="noble"           role="listitem"><i style="--c:#ff7744"></i>Noble Gas</span>
+    <span class="leg" data-cat="lanthanide"      role="listitem"><i style="--c:#22ffdd"></i>Lanthanide</span>
+    <span class="leg" data-cat="actinide"        role="listitem"><i style="--c:#44eeff"></i>Actinide</span>
+  </div>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║         THE ELEMENT SCENE        ║ -->
+  <!-- ║   #scene = perspective wrapper   ║ -->
+  <!-- ║   #stage = rotated 3D container  ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <div id="scene">
+    <div id="stage"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║           DETAIL PANEL           ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <aside id="panel" class="panel hidden" aria-label="Element details" role="complementary">
+    <button id="panel-close" aria-label="Close panel">✕</button>
+    <div class="panel-top">
+      <div class="p-num"  id="p-num"></div>
+      <div class="p-sym"  id="p-sym"></div>
+      <div class="p-name" id="p-name"></div>
+      <div class="p-cat"  id="p-cat"></div>
+    </div>
+    <dl class="panel-grid">
+      <div class="pd"><dt>Atomic Mass</dt>   <dd id="p-mass"></dd></div>
+      <div class="pd"><dt>Density</dt>       <dd id="p-dens"></dd></div>
+      <div class="pd"><dt>Melting Pt</dt>    <dd id="p-melt"></dd></div>
+      <div class="pd"><dt>Boiling Pt</dt>    <dd id="p-boil"></dd></div>
+      <div class="pd"><dt>Period</dt>        <dd id="p-period"></dd></div>
+      <div class="pd"><dt>Group</dt>         <dd id="p-group"></dd></div>
+      <div class="pd"><dt>Phase (STP)</dt>   <dd id="p-phase"></dd></div>
+      <div class="pd"><dt>Electroneg.</dt>   <dd id="p-en"></dd></div>
+      <div class="pd full"><dt>Electron Config</dt><dd id="p-cfg"></dd></div>
+      <div class="pd full"><dt>Discovered</dt>     <dd id="p-disc"></dd></div>
+    </dl>
+    <div class="panel-bars">
+      <div class="bar-label">Atomic Mass</div>
+      <div class="bar"><div class="bar-fill" id="bar-mass"></div></div>
+      <div class="bar-label">Electronegativity</div>
+      <div class="bar"><div class="bar-fill" id="bar-en"></div></div>
+    </div>
+    <p class="panel-fun" id="p-fun"></p>
+    <div class="panel-nav">
+      <button class="pnav-btn" id="nav-prev" title="Previous element (← key)">&#8592; PREV</button>
+      <span class="pnav-hint">Arrow keys navigate</span>
+      <button class="pnav-btn" id="nav-next" title="Next element (→ key)">NEXT &#8594;</button>
+    </div>
+  </aside>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║          SEARCH OVERLAY          ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <div id="search-overlay" class="search-overlay hidden" role="dialog" aria-label="Search elements">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input id="search-inp" type="search" placeholder="Name, symbol or atomic number…" autocomplete="off" aria-label="Search">
+      <button id="search-close">ESC</button>
+    </div>
+    <div id="search-results" role="listbox"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════════╗ -->
+  <!-- ║             FOOTER               ║ -->
+  <!-- ╚══════════════════════════════════╝ -->
+  <footer id="footer">
+    <span class="foot-by">Crafted with <span class="heart">♥</span> by</span>
+    <a href="https://github.com/souravbiswas35" target="_blank" rel="noopener" class="foot-link" aria-label="Sourav Biswas on GitHub">
+      <span class="foot-av" aria-hidden="true">SB</span>
+      <span class="foot-name">Sourav Biswas</span>
+    </a>
+    <span class="foot-sep">·</span>
+    <button class="btn foot-random" id="btn-random" title="Random element (R key)">🎲 RANDOM</button>
+    <span class="foot-sep">·</span>
+    <!-- Music Player -->
+    <div class="music" role="group" aria-label="Music player">
+      <button class="music-btn" id="music-btn" aria-label="Toggle ambient music">♪</button>
+      <span class="music-lbl" id="music-lbl">AMBIENT</span>
+      <div class="music-bars" id="music-bars" aria-hidden="true">
+        <s></s><s></s><s></s><s></s>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
